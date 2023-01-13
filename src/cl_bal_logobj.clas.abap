@@ -11,9 +11,14 @@ CLASS cl_bal_logobj DEFINITION PUBLIC.
       IMPORTING
         ix_exception TYPE REF TO cx_root.
 
+    TYPES: BEGIN OF ty_log,
+             lognumber TYPE balognr,
+           END OF ty_log.
+    TYPES ty_logs TYPE STANDARD TABLE OF ty_log WITH DEFAULT KEY.
+
     METHODS save
       EXPORTING
-        et_lognumbers TYPE string_table.
+        et_lognumbers TYPE ty_logs.
 ENDCLASS.
 
 CLASS cl_bal_logobj IMPLEMENTATION.
