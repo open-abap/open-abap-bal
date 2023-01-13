@@ -36,7 +36,7 @@ CLASS cl_bal_logobj IMPLEMENTATION.
 
   METHOD save.
 * todo
-    RETURN.
+    APPEND INITIAL LINE TO et_lognumbers.
   ENDMETHOD.
 
 ENDCLASS.
