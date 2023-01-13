@@ -19,13 +19,14 @@ CLASS cl_bal_logobj DEFINITION PUBLIC.
     METHODS save
       EXPORTING
         et_lognumbers TYPE ty_logs.
+  PRIVATE SECTION.
+    DATA mv_extnumber TYPE string.
 ENDCLASS.
 
 CLASS cl_bal_logobj IMPLEMENTATION.
 
   METHOD constructor.
-* todo
-    RETURN.
+    mv_extnumber = i_extnumber.
   ENDMETHOD.
 
   METHOD add_exception.
