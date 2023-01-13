@@ -5,7 +5,7 @@ CLASS cl_bal_logobj DEFINITION PUBLIC.
         i_log_object        TYPE clike
         i_default_subobject TYPE clike
         i_reorg_in_days     TYPE clike
-        i_extnumber         TYPE clike.
+        i_extnumber         TYPE string.
 
     METHODS add_exception
       IMPORTING
