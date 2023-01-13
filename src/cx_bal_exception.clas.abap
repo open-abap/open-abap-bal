@@ -1,0 +1,7 @@
+CLASS cx_bal_exception DEFINITION PUBLIC INHERITING FROM cx_static_check.
+
+ENDCLASS.
+
+CLASS cx_bal_exception IMPLEMENTATION.
+
+ENDCLASS.
