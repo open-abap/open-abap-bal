@@ -10,6 +10,12 @@
     "version": "open-abap",
     "errorNamespace": "."
   },
+  "dependencies": [
+    {
+      "url": "https://github.com/open-abap/open-abap-core",
+      "files": "/src/**/*.*"
+    }
+  ],
   "rules": {
     "check_include": false, // todo
     "uncaught_exception": false, // todo

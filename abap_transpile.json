@@ -4,6 +4,11 @@
   "output_folder": "output",
   "write_unit_tests": true,
   "write_source_map": true,
+  "libs": [
+    {
+      "url": "https://github.com/open-abap/open-abap-core"
+    }
+  ],
   "options": {
     "ignoreSyntaxCheck": false,
     "addFilenames": true,
