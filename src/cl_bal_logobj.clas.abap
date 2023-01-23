@@ -11,6 +11,10 @@ CLASS cl_bal_logobj DEFINITION PUBLIC.
       IMPORTING
         ix_exception TYPE REF TO cx_root.
 
+    METHODS add_msg
+      IMPORTING
+        foo TYPE clike.
+
     TYPES: BEGIN OF ty_log,
              lognumber TYPE balognr,
            END OF ty_log.
@@ -27,6 +31,11 @@ CLASS cl_bal_logobj IMPLEMENTATION.
 
   METHOD constructor.
     mv_extnumber = i_extnumber.
+  ENDMETHOD.
+
+  METHOD add_msg.
+* todo
+    RETURN.
   ENDMETHOD.
 
   METHOD add_exception.
