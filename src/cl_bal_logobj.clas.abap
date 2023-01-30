@@ -29,6 +29,12 @@ CLASS cl_bal_logobj DEFINITION PUBLIC.
         i_statustext TYPE string
       RAISING
         cx_bal_exception.
+
+    METHODS add_errortext
+      IMPORTING
+        i_errortext TYPE string
+      RAISING
+        cx_bal_exception.
   PRIVATE SECTION.
     DATA mv_extnumber TYPE string.
 ENDCLASS.
@@ -37,6 +43,11 @@ CLASS cl_bal_logobj IMPLEMENTATION.
 
   METHOD constructor.
     mv_extnumber = i_extnumber.
+  ENDMETHOD.
+
+  METHOD add_errortext.
+* todo
+    RETURN.
   ENDMETHOD.
 
   METHOD add_statustext.
