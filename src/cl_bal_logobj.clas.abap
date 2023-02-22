@@ -62,12 +62,16 @@ CLASS cl_bal_logobj IMPLEMENTATION.
 
   METHOD add_exception.
 * todo
+    WRITE '@KERNEL console.dir(ix_exception);'.
+
     RETURN.
   ENDMETHOD.
 
   METHOD save.
 * todo
-    APPEND INITIAL LINE TO et_lognumbers.
+    FIELD-SYMBOLS <fs> LIKE LINE OF et_lognumbers.
+    APPEND INITIAL LINE TO et_lognumbers ASSIGNING <fs>.
+    <fs>-lognumber = '00000000000000000001'.
   ENDMETHOD.
 
 ENDCLASS.
