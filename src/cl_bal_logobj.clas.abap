@@ -62,6 +62,8 @@ CLASS cl_bal_logobj IMPLEMENTATION.
 
   METHOD add_exception.
 * todo
+    WRITE '@KERNEL console.dir(ix_exception);'.
+
     RETURN.
   ENDMETHOD.
 
