@@ -1,10 +1,6 @@
 {
   "global": {
-    "files": "/{src,test}/**/*.*",
-    "noIssues": [],
-    "skipGeneratedGatewayClasses": true,
-    "skipGeneratedPersistentClasses": true,
-    "skipGeneratedFunctionGroups": true
+    "files": "/{src,test}/**/*.*"
   },
   "syntax": {
     "version": "open-abap",
@@ -17,8 +13,14 @@
     }
   ],
   "rules": {
-    "check_include": false, // todo
-    "uncaught_exception": false, // todo
+    "cds_comment_style": true,
+    "change_if_to_case": true,
+    "expand_macros": true,
+    "fully_type_itabs": true,
+    "strict_sql": false,
+    "unnecessary_return": false,
+    "check_include": true,
+    "uncaught_exception": true,
     "cds_legacy_view": true,
     "no_external_form_calls": true,
     "superfluous_value": true,
