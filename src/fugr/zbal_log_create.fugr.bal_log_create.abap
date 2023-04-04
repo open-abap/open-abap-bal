@@ -9,6 +9,7 @@ FUNCTION bal_log_create.
 *"      LOG_HEADER_INCONSISTENT
 *"----------------------------------------------------------------------
 
+* todo
   e_log_handle = '123'.
 
 ENDFUNCTION.
