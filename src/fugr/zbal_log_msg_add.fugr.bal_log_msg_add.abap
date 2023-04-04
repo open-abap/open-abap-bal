@@ -11,6 +11,8 @@ FUNCTION bal_log_msg_add.
 *"----------------------------------------------------------------------
 
 * todo
-  RETURN.
+
+* workaround for exceptions,
+  sy-subrc = 0.
 
 ENDFUNCTION.
