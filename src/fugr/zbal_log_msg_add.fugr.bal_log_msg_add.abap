@@ -10,6 +10,7 @@ FUNCTION bal_log_msg_add.
 *"      LOG_IS_FULL
 *"----------------------------------------------------------------------
 
-  ASSERT 1 = 'todo'.
+* todo
+  RETURN.
 
 ENDFUNCTION.

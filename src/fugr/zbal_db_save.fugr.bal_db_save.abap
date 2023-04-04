@@ -11,6 +11,10 @@ FUNCTION bal_db_save.
 *"      NUMBERING_ERROR
 *"----------------------------------------------------------------------
 
-  ASSERT 1 = 'todo'.
+  FIELD-SYMBOLS <fs> LIKE LINE OF e_new_lognumbers.
+
+* todo
+  APPEND INITIAL LINE TO e_new_lognumbers ASSIGNING <fs>.
+  <fs>-lognumber = '123'.
 
 ENDFUNCTION.
