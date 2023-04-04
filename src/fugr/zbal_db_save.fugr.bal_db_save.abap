@@ -17,4 +17,7 @@ FUNCTION bal_db_save.
   APPEND INITIAL LINE TO e_new_lognumbers ASSIGNING <fs>.
   <fs>-lognumber = '123'.
 
+* workaround for exceptions,
+  sy-subrc = 0.
+
 ENDFUNCTION.

@@ -12,4 +12,7 @@ FUNCTION bal_log_create.
 * todo
   e_log_handle = '123'.
 
+* workaround for exceptions,
+  sy-subrc = 0.
+
 ENDFUNCTION.
