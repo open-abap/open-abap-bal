@@ -21,6 +21,8 @@ CLASS cl_bal_logobj DEFINITION PUBLIC.
         foo TYPE clike.
 
     METHODS save
+      IMPORTING
+        i_save_all    TYPE abap_bool DEFAULT abap_true
       EXPORTING
         et_lognumbers TYPE ty_logs.
 
