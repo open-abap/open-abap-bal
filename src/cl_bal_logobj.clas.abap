@@ -64,6 +64,7 @@ CLASS cl_bal_logobj IMPLEMENTATION.
 
   METHOD add_exception.
 * todo
+    WRITE '@KERNEL console.log("cl_bal_logobj add_exception()");'.
     WRITE '@KERNEL console.dir(ix_exception);'.
 
     RETURN.
