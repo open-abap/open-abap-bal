@@ -1,8 +1,8 @@
 *******************************************************************
 *   System-defined Include-files.                                 *
 *******************************************************************
-  INCLUDE LZBAL_LOG_MSG_ADD_FREE_TEXTTOP.    " Global Declarations
-  INCLUDE LZBAL_LOG_MSG_ADD_FREE_TEXTUXX.    " Function Modules
+INCLUDE lzbal_log_msg_add_free_texttop.    " Global Declarations
+INCLUDE lzbal_log_msg_add_free_textuxx.    " Function Modules
 
 *******************************************************************
 *   User-defined Include-files (if necessary).                    *
