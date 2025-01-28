@@ -11,6 +11,9 @@ FUNCTION bal_log_msg_add_free_text.
 *"      LOG_IS_FULL
 *"----------------------------------------------------------------------
 
+* todo
 
+* workaround for exceptions,
+  sy-subrc = 0.
 
 ENDFUNCTION.
