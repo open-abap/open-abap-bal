@@ -1,6 +1,6 @@
 CLASS cl_bali_free_text_setter DEFINITION PUBLIC CREATE PRIVATE.
   PUBLIC SECTION.
-    TYPES ty_text TYPE string.
+    TYPES ty_text     TYPE c LENGTH 200.
     TYPES ty_severity TYPE c LENGTH 1.
 
     DATA category TYPE string VALUE 'FREE_TEXT'.
@@ -11,8 +11,8 @@ CLASS cl_bali_free_text_setter DEFINITION PUBLIC CREATE PRIVATE.
 
     CLASS-METHODS create
       IMPORTING
-        severity TYPE ty_severity
-        text     TYPE ty_text
+        severity      TYPE ty_severity
+        text          TYPE ty_text
       RETURNING
         VALUE(result) TYPE REF TO cl_bali_free_text_setter.
 

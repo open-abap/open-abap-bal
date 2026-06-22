@@ -31,6 +31,7 @@
     "omit_receiving": true,
     "align_parameters": false,
     "cds_parser_error": true,
+    "align_type_expressions": true,
     "classic_exceptions_overlap": true,
     "constant_classes": true,
     "local_testclass_consistency": true,

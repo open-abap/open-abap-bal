@@ -6,24 +6,24 @@ CLASS cl_bali_log_db DEFINITION PUBLIC CREATE PRIVATE.
 
     METHODS save_log
       IMPORTING
-        log TYPE REF TO if_bali_log
+        log                        TYPE REF TO if_bali_log
         assign_to_current_appl_job TYPE abap_bool OPTIONAL
       RAISING
         cx_bali_runtime.
 
     METHODS save_log_2nd_db_connection
       IMPORTING
-        log TYPE REF TO if_bali_log
+        log                        TYPE REF TO if_bali_log
         assign_to_current_appl_job TYPE abap_bool OPTIONAL
       RAISING
         cx_bali_runtime.
 
     METHODS load_log
       IMPORTING
-        handle TYPE if_bali_log=>ty_handle
+        handle           TYPE if_bali_log=>ty_handle
         read_only_header TYPE abap_bool OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO if_bali_log
+        VALUE(result)    TYPE REF TO if_bali_log
       RAISING
         cx_bali_runtime.
 
