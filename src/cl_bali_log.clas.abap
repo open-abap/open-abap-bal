@@ -4,7 +4,7 @@ CLASS cl_bali_log DEFINITION PUBLIC CREATE PRIVATE.
 
     CLASS-METHODS create_with_header
       IMPORTING
-        header TYPE REF TO cl_bali_header_setter
+        header        TYPE REF TO cl_bali_header_setter
       RETURNING
         VALUE(result) TYPE REF TO if_bali_log
       RAISING

@@ -2,13 +2,13 @@ CLASS cl_bali_header_setter DEFINITION PUBLIC CREATE PRIVATE.
   PUBLIC SECTION.
     CLASS-METHODS create
       IMPORTING
-        object        TYPE if_bali_object_handler=>ty_object
-        subobject     TYPE if_bali_object_handler=>ty_object OPTIONAL
-        external_id   TYPE string OPTIONAL
-        expiration    TYPE i OPTIONAL
+        object                TYPE if_bali_object_handler=>ty_object
+        subobject             TYPE if_bali_object_handler=>ty_object OPTIONAL
+        external_id           TYPE string OPTIONAL
+        expiration            TYPE i OPTIONAL
         keep_until_expiration TYPE abap_bool OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO cl_bali_header_setter.
+        VALUE(result)         TYPE REF TO cl_bali_header_setter.
 
     METHODS get_object
       RETURNING

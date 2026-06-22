@@ -23,7 +23,7 @@ INTERFACE if_bali_log PUBLIC.
     IMPORTING
       log_item_number TYPE ty_log_item_number
     RETURNING
-      VALUE(result) TYPE REF TO cl_bali_free_text_setter
+      VALUE(result)   TYPE REF TO cl_bali_free_text_setter
     RAISING
       cx_bali_runtime.
 ENDINTERFACE.
