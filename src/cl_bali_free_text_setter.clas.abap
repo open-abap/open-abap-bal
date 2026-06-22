@@ -3,6 +3,12 @@ CLASS cl_bali_free_text_setter DEFINITION PUBLIC CREATE PRIVATE.
     TYPES ty_text TYPE string.
     TYPES ty_severity TYPE c LENGTH 1.
 
+    DATA category TYPE string VALUE 'FREE_TEXT'.
+    DATA severity TYPE ty_severity.
+    DATA detail_level TYPE i VALUE 1.
+    DATA log_item_number TYPE if_bali_log=>ty_log_item_number.
+    DATA timestamp TYPE timestampl.
+
     CLASS-METHODS create
       IMPORTING
         severity TYPE ty_severity
@@ -18,8 +24,11 @@ CLASS cl_bali_free_text_setter DEFINITION PUBLIC CREATE PRIVATE.
       RETURNING
         VALUE(result) TYPE ty_text.
 
+    METHODS get_message_text
+      RETURNING
+        VALUE(result) TYPE string.
+
   PRIVATE SECTION.
-    DATA severity TYPE ty_severity.
     DATA text TYPE ty_text.
 ENDCLASS.
 
@@ -36,6 +45,10 @@ CLASS cl_bali_free_text_setter IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_text.
+    result = text.
+  ENDMETHOD.
+
+  METHOD get_message_text.
     result = text.
   ENDMETHOD.
 

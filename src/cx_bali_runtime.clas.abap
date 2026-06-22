@@ -1,0 +1,5 @@
+CLASS cx_bali_runtime DEFINITION PUBLIC INHERITING FROM cx_static_check.
+ENDCLASS.
+
+CLASS cx_bali_runtime IMPLEMENTATION.
+ENDCLASS.
