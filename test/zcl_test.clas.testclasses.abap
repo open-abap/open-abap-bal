@@ -9,8 +9,14 @@ ENDCLASS.
 CLASS ltcl_test IMPLEMENTATION.
 
   METHOD create_empty_log.
+    DATA object TYPE cl_bali_header_setter=>ty_object.
+    DATA subobject TYPE cl_bali_header_setter=>ty_subobject.
+    DATA external_id TYPE cl_bali_header_setter=>ty_external_id.
     DATA(log) = cl_bali_log=>create( ).
 
+    cl_abap_unit_assert=>assert_initial( object ).
+    cl_abap_unit_assert=>assert_initial( subobject ).
+    cl_abap_unit_assert=>assert_initial( external_id ).
     cl_abap_unit_assert=>assert_bound( log ).
     cl_abap_unit_assert=>assert_initial( log->get_all_items( ) ).
   ENDMETHOD.
