@@ -1,7 +1,10 @@
 CLASS cl_bali_free_text_setter DEFINITION PUBLIC CREATE PRIVATE.
   PUBLIC SECTION.
-    TYPES ty_text     TYPE c LENGTH 200.
-    TYPES ty_severity TYPE c LENGTH 1.
+    INTERFACES if_bali_item_setter.
+    INTERFACES if_bali_free_text_setter.
+
+    ALIASES ty_severity FOR if_bali_item_setter~ty_severity.
+    ALIASES ty_text FOR if_bali_free_text_setter~ty_text.
 
     DATA category TYPE string VALUE 'FREE_TEXT'.
     DATA severity TYPE ty_severity.
@@ -14,7 +17,7 @@ CLASS cl_bali_free_text_setter DEFINITION PUBLIC CREATE PRIVATE.
         severity      TYPE ty_severity
         text          TYPE ty_text
       RETURNING
-        VALUE(result) TYPE REF TO cl_bali_free_text_setter.
+        VALUE(result) TYPE REF TO if_bali_free_text_setter.
 
     METHODS get_severity
       RETURNING
@@ -33,11 +36,16 @@ CLASS cl_bali_free_text_setter DEFINITION PUBLIC CREATE PRIVATE.
 ENDCLASS.
 
 CLASS cl_bali_free_text_setter IMPLEMENTATION.
+  METHOD if_bali_free_text_setter~set_detail_level.
+    me->detail_level = detail_level.
+  ENDMETHOD.
 
   METHOD create.
-    CREATE OBJECT result.
-    result->severity = severity.
-    result->text = text.
+    DATA lo_setter TYPE REF TO cl_bali_free_text_setter.
+    CREATE OBJECT lo_setter.
+    lo_setter->severity = severity.
+    lo_setter->text = text.
+    result ?= lo_setter.
   ENDMETHOD.
 
   METHOD get_severity.

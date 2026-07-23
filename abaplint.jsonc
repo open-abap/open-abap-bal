@@ -131,6 +131,7 @@
     "forbidden_pseudo_and_pragma": true,
     "forbidden_void_type": true,
     "form_tables_obsolete": true,
+    "no_exclamation_escape": true,
     "cloud_types": false,
     "commented_code": false,
     "constructor_visibility_public": false,

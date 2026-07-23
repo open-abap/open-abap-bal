@@ -66,7 +66,7 @@ CLASS cl_bali_log IMPLEMENTATION.
       DATA(item) = cl_bali_free_text_setter=>create(
         severity = source_item-item->get_severity( )
         text = source_item-item->get_text( ) ).
-      item->detail_level = source_item-item->detail_level.
+      item->set_detail_level( source_item-item->detail_level ).
       item->timestamp = source_item-item->timestamp.
       if_bali_log~add_item( item ).
     ENDLOOP.

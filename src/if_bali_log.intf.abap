@@ -21,7 +21,7 @@ INTERFACE if_bali_log PUBLIC.
 
   METHODS add_item
     IMPORTING
-      item TYPE REF TO cl_bali_free_text_setter
+      item TYPE REF TO if_bali_item_setter
     RAISING
       cx_bali_runtime.
 
