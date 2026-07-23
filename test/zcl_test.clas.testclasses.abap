@@ -1,11 +1,70 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
+    METHODS create_empty_log FOR TESTING RAISING cx_bali_runtime.
+    METHODS copy_log_items FOR TESTING RAISING cx_bali_runtime.
+    METHODS get_log_handle FOR TESTING RAISING cx_bali_runtime.
+    METHODS save_log_2nd_connection FOR TESTING RAISING cx_bali_runtime.
+    METHODS set_log_header FOR TESTING RAISING cx_bali_runtime.
     METHODS test1 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD create_empty_log.
+    DATA object TYPE cl_bali_header_setter=>ty_object.
+    DATA subobject TYPE cl_bali_header_setter=>ty_subobject.
+    DATA external_id TYPE cl_bali_header_setter=>ty_external_id.
+    DATA(log) = cl_bali_log=>create( ).
+
+    cl_abap_unit_assert=>assert_initial( object ).
+    cl_abap_unit_assert=>assert_initial( subobject ).
+    cl_abap_unit_assert=>assert_initial( external_id ).
+    cl_abap_unit_assert=>assert_bound( log ).
+    cl_abap_unit_assert=>assert_initial( log->get_all_items( ) ).
+  ENDMETHOD.
+
+  METHOD copy_log_items.
+    DATA(source_log) = cl_bali_log=>create( ).
+    DATA(target_log) = cl_bali_log=>create( ).
+    DATA(item) = cl_bali_free_text_setter=>create(
+      severity = 'I'
+      text = 'copied item' ).
+    source_log->add_item( item ).
+
+    target_log->add_all_items_from_other_log( source_log ).
+
+    DATA(target_items) = target_log->get_all_items( ).
+    cl_abap_unit_assert=>assert_equals( act = lines( target_items ) exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = target_items[ 1 ]-item->get_text( )
+      exp = 'copied item' ).
+    cl_abap_unit_assert=>assert_equals( act = item->log_item_number exp = 1 ).
+  ENDMETHOD.
+
+  METHOD get_log_handle.
+    DATA(log) = cl_bali_log=>create( ).
+    DATA(handle) = log->get_handle( ).
+
+    cl_abap_unit_assert=>assert_not_initial( handle ).
+    cl_abap_unit_assert=>assert_equals( act = log->get_handle( ) exp = handle ).
+  ENDMETHOD.
+
+  METHOD save_log_2nd_connection.
+    DATA(log) = cl_bali_log=>create( ).
+
+    cl_bali_log_db=>get_instance( )->save_log(
+      log = log
+      use_2nd_db_connection = abap_true ).
+  ENDMETHOD.
+
+  METHOD set_log_header.
+    DATA(log) = cl_bali_log=>create( ).
+    DATA(header) = cl_bali_header_setter=>create( object = 'ZFOOBAR' ).
+
+    log->set_header( header ).
+  ENDMETHOD.
 
   METHOD test1.
 

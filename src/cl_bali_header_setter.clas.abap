@@ -1,10 +1,14 @@
 CLASS cl_bali_header_setter DEFINITION PUBLIC CREATE PRIVATE.
   PUBLIC SECTION.
+    TYPES ty_object TYPE if_bali_object_handler=>ty_object.
+    TYPES ty_subobject TYPE if_bali_object_handler=>ty_subobject.
+    TYPES ty_external_id TYPE c LENGTH 100.
+
     CLASS-METHODS create
       IMPORTING
-        object                TYPE if_bali_object_handler=>ty_object
-        subobject             TYPE if_bali_object_handler=>ty_object OPTIONAL
-        external_id           TYPE string OPTIONAL
+        object                TYPE ty_object
+        subobject             TYPE ty_subobject OPTIONAL
+        external_id           TYPE ty_external_id OPTIONAL
         expiration            TYPE i OPTIONAL
         keep_until_expiration TYPE abap_bool OPTIONAL
       RETURNING
@@ -12,16 +16,16 @@ CLASS cl_bali_header_setter DEFINITION PUBLIC CREATE PRIVATE.
 
     METHODS get_object
       RETURNING
-        VALUE(result) TYPE if_bali_object_handler=>ty_object.
+        VALUE(result) TYPE ty_object.
 
     METHODS get_subobject
       RETURNING
-        VALUE(result) TYPE if_bali_object_handler=>ty_object.
+        VALUE(result) TYPE ty_subobject.
 
   PRIVATE SECTION.
-    DATA object TYPE if_bali_object_handler=>ty_object.
-    DATA subobject TYPE if_bali_object_handler=>ty_object.
-    DATA external_id TYPE string.
+    DATA object TYPE ty_object.
+    DATA subobject TYPE ty_subobject.
+    DATA external_id TYPE ty_external_id.
 ENDCLASS.
 
 CLASS cl_bali_header_setter IMPLEMENTATION.

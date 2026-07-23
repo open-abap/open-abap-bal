@@ -7,6 +7,7 @@ CLASS cl_bali_log_db DEFINITION PUBLIC CREATE PRIVATE.
     METHODS save_log
       IMPORTING
         log                        TYPE REF TO if_bali_log
+        use_2nd_db_connection      TYPE abap_bool OPTIONAL
         assign_to_current_appl_job TYPE abap_bool OPTIONAL
       RAISING
         cx_bali_runtime.
@@ -45,7 +46,10 @@ CLASS cl_bali_log_db IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD save_log_2nd_db_connection.
-    save_log( log = log assign_to_current_appl_job = assign_to_current_appl_job ).
+    save_log(
+      log = log
+      use_2nd_db_connection = abap_true
+      assign_to_current_appl_job = assign_to_current_appl_job ).
   ENDMETHOD.
 
   METHOD load_log.
