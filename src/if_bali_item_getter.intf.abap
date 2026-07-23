@@ -13,4 +13,10 @@ INTERFACE if_bali_item_getter PUBLIC.
   DATA detail_level TYPE ty_detail_level READ-ONLY.
   DATA timestamp TYPE ty_timestamp READ-ONLY.
 
+  METHODS get_message_text
+    RETURNING
+      VALUE(message_text) TYPE ty_message_text
+    RAISING
+      cx_bali_runtime.
+
 ENDINTERFACE.
