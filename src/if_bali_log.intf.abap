@@ -5,7 +5,7 @@ INTERFACE if_bali_log PUBLIC.
   TYPES:
     BEGIN OF ty_log_item,
       log_item_number TYPE ty_log_item_number,
-      item            TYPE REF TO cl_bali_free_text_setter,
+      item            TYPE REF TO if_bali_item_getter,
     END OF ty_log_item.
   TYPES ty_log_items TYPE STANDARD TABLE OF ty_log_item WITH DEFAULT KEY.
 
@@ -21,7 +21,7 @@ INTERFACE if_bali_log PUBLIC.
 
   METHODS add_item
     IMPORTING
-      item TYPE REF TO cl_bali_free_text_setter
+      item TYPE REF TO if_bali_item_setter
     RAISING
       cx_bali_runtime.
 
