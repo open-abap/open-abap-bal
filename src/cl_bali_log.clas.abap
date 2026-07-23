@@ -2,6 +2,12 @@ CLASS cl_bali_log DEFINITION PUBLIC CREATE PRIVATE.
   PUBLIC SECTION.
     INTERFACES if_bali_log.
 
+    CLASS-METHODS create
+      RETURNING
+        VALUE(log) TYPE REF TO if_bali_log
+      RAISING
+        cx_bali_runtime.
+
     CLASS-METHODS create_with_header
       IMPORTING
         header        TYPE REF TO cl_bali_header_setter
@@ -16,6 +22,10 @@ CLASS cl_bali_log DEFINITION PUBLIC CREATE PRIVATE.
 ENDCLASS.
 
 CLASS cl_bali_log IMPLEMENTATION.
+  METHOD create.
+    CREATE OBJECT log TYPE cl_bali_log.
+  ENDMETHOD.
+
   METHOD create_with_header.
     DATA log TYPE REF TO cl_bali_log.
     CREATE OBJECT log.
