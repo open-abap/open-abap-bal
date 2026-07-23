@@ -38,6 +38,7 @@ ENDCLASS.
 CLASS cl_bali_free_text_setter IMPLEMENTATION.
   METHOD if_bali_free_text_setter~set_detail_level.
     me->detail_level = detail_level.
+    new_free_text = me.
   ENDMETHOD.
 
   METHOD create.

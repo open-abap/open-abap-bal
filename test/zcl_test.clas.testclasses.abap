@@ -8,6 +8,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS create_message FOR TESTING.
     METHODS create_message_from_bapiret2 FOR TESTING.
     METHODS create_exception FOR TESTING.
+    METHODS add_item FOR TESTING RAISING cx_bali_runtime.
     METHODS test1 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -131,6 +132,19 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( act = severity exp = 'E' ).
     cl_abap_unit_assert=>assert_bound( returned_exception ).
     cl_abap_unit_assert=>assert_equals( act = returned_exception exp = source_exception ).
+  ENDMETHOD.
+
+  METHOD add_item.
+    DATA(log) = cl_bali_log=>create( ).
+    DATA(message) = cl_bali_message_setter=>create(
+      id     = '00'
+      number = '001' ).
+
+    log->add_item( message ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( log->get_all_items( ) )
+      exp = 1 ).
   ENDMETHOD.
 
   METHOD test1.

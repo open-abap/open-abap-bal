@@ -54,8 +54,10 @@ CLASS cl_bali_log IMPLEMENTATION.
     DATA item_line TYPE if_bali_log=>ty_log_item.
 
     item_line-log_item_number = lines( items ) + 1.
-    item_line-item ?= item.
-* todo    item->log_item_number = item_line-log_item_number.
+    CREATE OBJECT item_line-item TYPE lcl_bali_item_getter
+      EXPORTING
+        item = item
+        item_number = item_line-log_item_number.
     APPEND item_line TO items.
   ENDMETHOD.
 
