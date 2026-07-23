@@ -15,7 +15,7 @@ INTERFACE if_bali_log PUBLIC.
 
   METHODS set_header
     IMPORTING
-      header TYPE REF TO cl_bali_header_setter
+      header TYPE REF TO if_bali_header_setter
     RAISING
       cx_bali_runtime.
 

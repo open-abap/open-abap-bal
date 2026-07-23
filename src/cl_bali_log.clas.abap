@@ -10,7 +10,7 @@ CLASS cl_bali_log DEFINITION PUBLIC CREATE PRIVATE.
 
     CLASS-METHODS create_with_header
       IMPORTING
-        header        TYPE REF TO cl_bali_header_setter
+        header        TYPE REF TO if_bali_header_setter
       RETURNING
         VALUE(result) TYPE REF TO if_bali_log
       RAISING
@@ -38,12 +38,12 @@ CLASS cl_bali_log IMPLEMENTATION.
   METHOD create_with_header.
     DATA log TYPE REF TO cl_bali_log.
     CREATE OBJECT log.
-    log->header = header.
+    log->header ?= header.
     result = log.
   ENDMETHOD.
 
   METHOD if_bali_log~set_header.
-    me->header = header.
+    me->header ?= header.
   ENDMETHOD.
 
   METHOD if_bali_log~get_handle.
