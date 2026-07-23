@@ -7,6 +7,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS set_log_header FOR TESTING RAISING cx_bali_runtime.
     METHODS create_message FOR TESTING.
     METHODS create_message_from_bapiret2 FOR TESTING.
+    METHODS create_exception FOR TESTING.
     METHODS test1 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -107,6 +108,29 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( act = id exp = 'ZTEST' ).
     cl_abap_unit_assert=>assert_equals( act = number exp = '123' ).
     cl_abap_unit_assert=>assert_equals( act = variable_1 exp = 'value' ).
+  ENDMETHOD.
+
+  METHOD create_exception.
+    DATA detail_level TYPE if_bali_item_setter=>ty_detail_level.
+    DATA severity TYPE if_bali_item_setter=>ty_severity.
+    DATA returned_exception TYPE REF TO cx_root.
+    DATA source_exception TYPE REF TO cx_bali_runtime.
+
+    CREATE OBJECT source_exception.
+    DATA(exception_item) = cl_bali_exception_setter=>create(
+      severity = if_bali_constants=>c_severity_error
+      exception = source_exception ).
+
+    exception_item->set_detail_level( '8' )->get_all_values(
+      IMPORTING
+        detail_level = detail_level
+        severity = severity
+        exception = returned_exception ).
+
+    cl_abap_unit_assert=>assert_equals( act = detail_level exp = '8' ).
+    cl_abap_unit_assert=>assert_equals( act = severity exp = 'E' ).
+    cl_abap_unit_assert=>assert_bound( returned_exception ).
+    cl_abap_unit_assert=>assert_equals( act = returned_exception exp = source_exception ).
   ENDMETHOD.
 
   METHOD test1.
