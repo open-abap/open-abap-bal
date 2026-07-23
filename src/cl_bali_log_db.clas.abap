@@ -1,16 +1,12 @@
 CLASS cl_bali_log_db DEFINITION PUBLIC CREATE PRIVATE.
   PUBLIC SECTION.
+    INTERFACES if_bali_log_db.
+    ALIASES delete_log FOR if_bali_log_db~delete_log.
+    ALIASES save_log FOR if_bali_log_db~save_log.
+
     CLASS-METHODS get_instance
       RETURNING
-        VALUE(result) TYPE REF TO cl_bali_log_db.
-
-    METHODS save_log
-      IMPORTING
-        log                        TYPE REF TO if_bali_log
-        use_2nd_db_connection      TYPE abap_bool OPTIONAL
-        assign_to_current_appl_job TYPE abap_bool OPTIONAL
-      RAISING
-        cx_bali_runtime.
+        VALUE(result) TYPE REF TO if_bali_log_db.
 
     METHODS save_log_2nd_db_connection
       IMPORTING
@@ -50,6 +46,12 @@ CLASS cl_bali_log_db IMPLEMENTATION.
       log = log
       use_2nd_db_connection = abap_true
       assign_to_current_appl_job = assign_to_current_appl_job ).
+  ENDMETHOD.
+
+  METHOD if_bali_log_db~delete_log.
+    IF last_log = log.
+      CLEAR last_log.
+    ENDIF.
   ENDMETHOD.
 
   METHOD load_log.
