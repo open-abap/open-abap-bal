@@ -5,6 +5,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_log_handle FOR TESTING RAISING cx_bali_runtime.
     METHODS save_log_2nd_connection FOR TESTING RAISING cx_bali_runtime.
     METHODS set_log_header FOR TESTING RAISING cx_bali_runtime.
+    METHODS create_message FOR TESTING.
+    METHODS create_message_from_bapiret2 FOR TESTING.
     METHODS test1 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -45,6 +47,66 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA(header) = cl_bali_header_setter=>create( object = 'ZFOOBAR' ).
 
     log->set_header( header ).
+  ENDMETHOD.
+
+  METHOD create_message.
+    DATA detail_level TYPE if_bali_item_setter=>ty_detail_level.
+    DATA severity TYPE if_bali_item_setter=>ty_severity.
+    DATA id TYPE if_bali_message_setter=>ty_id.
+    DATA number TYPE if_bali_message_setter=>ty_number.
+    DATA variable_1 TYPE if_bali_message_setter=>ty_variable.
+    DATA variable_2 TYPE if_bali_message_setter=>ty_variable.
+    DATA variable_3 TYPE if_bali_message_setter=>ty_variable.
+    DATA variable_4 TYPE if_bali_message_setter=>ty_variable.
+
+    DATA(message) = cl_bali_message_setter=>create(
+      severity = if_bali_constants=>c_severity_warning
+      id = '00'
+      number = '001'
+      variable_1 = 'first' ).
+
+    message->set_detail_level( '7' )->get_all_values(
+      IMPORTING
+        detail_level = detail_level
+        severity = severity
+        id = id
+        number = number
+        variable_1 = variable_1
+        variable_2 = variable_2
+        variable_3 = variable_3
+        variable_4 = variable_4 ).
+
+    cl_abap_unit_assert=>assert_equals( act = detail_level exp = '7' ).
+    cl_abap_unit_assert=>assert_equals( act = severity exp = 'W' ).
+    cl_abap_unit_assert=>assert_equals( act = id exp = '00' ).
+    cl_abap_unit_assert=>assert_equals( act = number exp = '001' ).
+    cl_abap_unit_assert=>assert_equals( act = variable_1 exp = 'first' ).
+  ENDMETHOD.
+
+  METHOD create_message_from_bapiret2.
+    DATA message_data TYPE bapiret2.
+    DATA severity TYPE if_bali_item_setter=>ty_severity.
+    DATA id TYPE if_bali_message_setter=>ty_id.
+    DATA number TYPE if_bali_message_setter=>ty_number.
+    DATA variable_1 TYPE if_bali_message_setter=>ty_variable.
+
+    message_data-type = 'E'.
+    message_data-id = 'ZTEST'.
+    message_data-number = '123'.
+    message_data-message_v1 = 'value'.
+
+    DATA(message) = cl_bali_message_setter=>create_from_bapiret2( message_data ).
+    message->get_all_values(
+      IMPORTING
+        severity = severity
+        id = id
+        number = number
+        variable_1 = variable_1 ).
+
+    cl_abap_unit_assert=>assert_equals( act = severity exp = 'E' ).
+    cl_abap_unit_assert=>assert_equals( act = id exp = 'ZTEST' ).
+    cl_abap_unit_assert=>assert_equals( act = number exp = '123' ).
+    cl_abap_unit_assert=>assert_equals( act = variable_1 exp = 'value' ).
   ENDMETHOD.
 
   METHOD test1.
