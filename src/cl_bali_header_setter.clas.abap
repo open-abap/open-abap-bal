@@ -50,6 +50,14 @@ CLASS cl_bali_header_setter IMPLEMENTATION.
     result = subobject.
   ENDMETHOD.
 
+  METHOD if_bali_header_setter~get_all_values.
+    object = me->object.
+    subobject = me->subobject.
+    external_id = me->external_id.
+    expiry_date = me->expiry_date.
+    keep_until_expiry = me->keep_until_expiry.
+  ENDMETHOD.
+
   METHOD if_bali_header_setter~set_expiry.
     IF expiry_date IS NOT INITIAL.
       me->expiry_date = expiry_date.
