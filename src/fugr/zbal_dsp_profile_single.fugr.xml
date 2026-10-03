@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>BAL_DSP_PROFILE_SINGLE_LOG_GET</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZBAL_DSP_PROFILE_SINGLETOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZBAL_DSP_PROFILE_SINGLE</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>BAL_DSP_PROFILE_SINGLE_LOG_GET</FUNCNAME>
+     <SHORT_TEXT>BAL_DSP_PROFILE_SINGLE_LOG_GET</SHORT_TEXT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>E_S_DISPLAY_PROFILE</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>BAL_S_PROF</TYP>
+      </RSEXP>
+     </EXPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>E_S_DISPLAY_PROFILE</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
