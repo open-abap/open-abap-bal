@@ -1,5 +1,5 @@
 INTERFACE if_bali_log PUBLIC.
-  TYPES ty_handle TYPE string.
+  TYPES ty_handle TYPE balloghndl.
   TYPES ty_log_item_number TYPE i.
 
   TYPES:
@@ -12,6 +12,12 @@ INTERFACE if_bali_log PUBLIC.
   METHODS get_handle
     RETURNING
       VALUE(handle) TYPE ty_handle.
+
+  METHODS get_header
+    RETURNING
+      VALUE(header) TYPE REF TO if_bali_header_getter
+    RAISING
+      cx_bali_runtime.
 
   METHODS set_header
     IMPORTING

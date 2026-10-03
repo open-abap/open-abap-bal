@@ -10,6 +10,17 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS create_exception FOR TESTING.
     METHODS add_item FOR TESTING RAISING cx_bali_runtime.
     METHODS test1 FOR TESTING RAISING cx_static_check.
+    METHODS get_header_values FOR TESTING RAISING cx_bali_runtime.
+    METHODS get_header_without_header FOR TESTING RAISING cx_bali_runtime.
+    METHODS get_header_counts_items FOR TESTING RAISING cx_bali_runtime.
+    METHODS item_has_timestamp FOR TESTING RAISING cx_bali_runtime.
+    METHODS message_item_exposes_key FOR TESTING RAISING cx_bali_runtime.
+    METHODS free_text_is_not_a_message FOR TESTING RAISING cx_bali_runtime.
+    METHODS load_saved_log_by_handle FOR TESTING RAISING cx_bali_runtime.
+    METHODS load_picks_log_by_handle FOR TESTING RAISING cx_bali_runtime.
+    METHODS load_unknown_handle_raises FOR TESTING.
+    METHODS load_deleted_log_raises FOR TESTING RAISING cx_bali_runtime.
+    METHODS display_profile_single_log FOR TESTING.
 
 ENDCLASS.
 
@@ -202,6 +213,192 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_subrc( ).
     cl_abap_unit_assert=>assert_not_initial( lt_lognumbers ).
 
+  ENDMETHOD.
+
+  METHOD display_profile_single_log.
+    DATA ls_profile TYPE bal_s_prof.
+
+    CALL FUNCTION 'BAL_DSP_PROFILE_SINGLE_LOG_GET'
+      IMPORTING
+        e_s_display_profile = ls_profile.
+
+    cl_abap_unit_assert=>assert_not_initial( ls_profile-title ).
+    cl_abap_unit_assert=>assert_equals( act = ls_profile-show_all exp = abap_true ).
+    cl_abap_unit_assert=>assert_equals( act = lines( ls_profile-lev1_fcat ) exp = 1 ).
+    cl_abap_unit_assert=>assert_not_initial( ls_profile-mess_fcat ).
+  ENDMETHOD.
+
+  METHOD get_header_values.
+    DATA(log) = cl_bali_log=>create( ).
+    DATA(setter) = cl_bali_header_setter=>create(
+      object      = 'ZFOOBAR'
+      subobject   = 'ZSUB'
+      external_id = 'EXTERNAL' ).
+    setter->set_expiry(
+      expiry_date       = '20301231'
+      keep_until_expiry = abap_true ).
+    log->set_header( setter ).
+
+    DATA(header) = log->get_header( ).
+
+    cl_abap_unit_assert=>assert_equals( act = header->object exp = 'ZFOOBAR' ).
+    cl_abap_unit_assert=>assert_equals( act = header->subobject exp = 'ZSUB' ).
+    cl_abap_unit_assert=>assert_equals( act = header->external_id exp = 'EXTERNAL' ).
+    cl_abap_unit_assert=>assert_equals( act = header->expiry_date exp = '20301231' ).
+    cl_abap_unit_assert=>assert_equals( act = header->keep_until_expiry exp = abap_true ).
+    cl_abap_unit_assert=>assert_equals( act = header->log_user exp = sy-uname ).
+    cl_abap_unit_assert=>assert_not_initial( header->log_timestamp ).
+  ENDMETHOD.
+
+  METHOD get_header_without_header.
+    DATA(header) = cl_bali_log=>create( )->get_header( ).
+
+    cl_abap_unit_assert=>assert_bound( header ).
+    cl_abap_unit_assert=>assert_initial( header->object ).
+    cl_abap_unit_assert=>assert_equals( act = header->number_all_items exp = 0 ).
+  ENDMETHOD.
+
+  METHOD get_header_counts_items.
+    DATA(log) = cl_bali_log=>create( ).
+
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'E' text = 'first error' ) ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'E' text = 'second error' ) ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'W' text = 'warning' ) ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'I' text = 'information' ) ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'S' text = 'status' ) ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'A' text = 'abort' ) ).
+
+    DATA(header) = log->get_header( ).
+
+    cl_abap_unit_assert=>assert_equals( act = header->number_all_items exp = 6 ).
+    cl_abap_unit_assert=>assert_equals( act = header->number_error_items exp = 2 ).
+    cl_abap_unit_assert=>assert_equals( act = header->number_warning_items exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = header->number_information_items exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = header->number_status_items exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = header->number_abort_items exp = 1 ).
+  ENDMETHOD.
+
+  METHOD item_has_timestamp.
+    DATA items TYPE if_bali_log=>ty_log_items.
+    DATA item_line TYPE if_bali_log=>ty_log_item.
+    DATA date TYPE d.
+    DATA time TYPE t.
+
+    DATA(log) = cl_bali_log=>create( ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'W' text = 'hello' ) ).
+
+    items = log->get_all_items( ).
+    READ TABLE items INDEX 1 INTO item_line.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_not_initial( item_line-item->timestamp ).
+
+    CONVERT UTCLONG item_line-item->timestamp INTO DATE date TIME time TIME ZONE 'UTC'.
+    cl_abap_unit_assert=>assert_not_initial( date ).
+  ENDMETHOD.
+
+  METHOD message_item_exposes_key.
+    DATA items TYPE if_bali_log=>ty_log_items.
+    DATA item_line TYPE if_bali_log=>ty_log_item.
+    DATA message TYPE REF TO if_bali_message_getter.
+
+    DATA(log) = cl_bali_log=>create( ).
+    log->add_item( cl_bali_message_setter=>create(
+      severity   = if_bali_constants=>c_severity_error
+      id         = 'ZTEST'
+      number     = '123'
+      variable_1 = 'one'
+      variable_2 = 'two' ) ).
+
+    items = log->get_all_items( ).
+    READ TABLE items INDEX 1 INTO item_line.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = item_line-item->category
+      exp = if_bali_constants=>c_category_message ).
+
+    message ?= item_line-item.
+    cl_abap_unit_assert=>assert_equals( act = message->id exp = 'ZTEST' ).
+    cl_abap_unit_assert=>assert_equals( act = message->number exp = '123' ).
+    cl_abap_unit_assert=>assert_equals( act = message->variable_1 exp = 'one' ).
+    cl_abap_unit_assert=>assert_equals( act = message->variable_2 exp = 'two' ).
+    cl_abap_unit_assert=>assert_initial( message->variable_3 ).
+    cl_abap_unit_assert=>assert_equals( act = message->severity exp = 'E' ).
+    cl_abap_unit_assert=>assert_not_initial( message->timestamp ).
+  ENDMETHOD.
+
+  METHOD free_text_is_not_a_message.
+    DATA items TYPE if_bali_log=>ty_log_items.
+    DATA item_line TYPE if_bali_log=>ty_log_item.
+    DATA message TYPE REF TO if_bali_message_getter.
+
+    DATA(log) = cl_bali_log=>create( ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'W' text = 'hello' ) ).
+
+    items = log->get_all_items( ).
+    READ TABLE items INDEX 1 INTO item_line.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    TRY.
+        message ?= item_line-item.
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sy_move_cast_error.
+        cl_abap_unit_assert=>assert_equals( act = item_line-item->get_message_text( ) exp = 'hello' ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD load_saved_log_by_handle.
+    DATA handle TYPE balloghndl.
+
+    DATA(log) = cl_bali_log=>create_with_header( cl_bali_header_setter=>create( object = 'ZFOOBAR' ) ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'E' text = 'persisted' ) ).
+    cl_bali_log_db=>get_instance( )->save_log( log ).
+    handle = log->get_handle( ).
+
+    DATA(loaded) = cl_bali_log_db=>get_instance( )->load_log( handle ).
+
+    cl_abap_unit_assert=>assert_equals( act = loaded->get_handle( ) exp = handle ).
+    cl_abap_unit_assert=>assert_equals( act = loaded->get_header( )->object exp = 'ZFOOBAR' ).
+    cl_abap_unit_assert=>assert_equals( act = lines( loaded->get_all_items( ) ) exp = 1 ).
+  ENDMETHOD.
+
+  METHOD load_picks_log_by_handle.
+    DATA(first) = cl_bali_log=>create_with_header( cl_bali_header_setter=>create( object = 'ZFIRST' ) ).
+    DATA(second) = cl_bali_log=>create_with_header( cl_bali_header_setter=>create( object = 'ZSECOND' ) ).
+
+    cl_bali_log_db=>get_instance( )->save_log( first ).
+    cl_bali_log_db=>get_instance( )->save_log( second ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_bali_log_db=>get_instance( )->load_log( first->get_handle( ) )->get_header( )->object
+      exp = 'ZFIRST' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_bali_log_db=>get_instance( )->load_log( second->get_handle( ) )->get_header( )->object
+      exp = 'ZSECOND' ).
+  ENDMETHOD.
+
+  METHOD load_unknown_handle_raises.
+    TRY.
+        cl_bali_log_db=>get_instance( )->load_log( 'NO_SUCH_HANDLE' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_bali_not_found.
+        RETURN.
+      CATCH cx_bali_runtime.
+        cl_abap_unit_assert=>fail( ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD load_deleted_log_raises.
+    DATA(log) = cl_bali_log=>create( ).
+
+    cl_bali_log_db=>get_instance( )->save_log( log ).
+    cl_bali_log_db=>get_instance( )->delete_log( log ).
+
+    TRY.
+        cl_bali_log_db=>get_instance( )->load_log( log->get_handle( ) ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_bali_runtime.
+        RETURN.
+    ENDTRY.
   ENDMETHOD.
 
 ENDCLASS.

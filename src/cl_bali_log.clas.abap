@@ -19,8 +19,9 @@ CLASS cl_bali_log DEFINITION PUBLIC CREATE PRIVATE.
   PRIVATE SECTION.
     CLASS-DATA next_handle TYPE i.
     DATA handle TYPE if_bali_log=>ty_handle.
-    DATA header TYPE REF TO cl_bali_header_setter.
+    DATA header TYPE REF TO if_bali_header_setter.
     DATA items TYPE if_bali_log=>ty_log_items.
+    DATA created_at TYPE utclong.
 
     METHODS constructor.
 ENDCLASS.
@@ -28,7 +29,8 @@ ENDCLASS.
 CLASS cl_bali_log IMPLEMENTATION.
   METHOD constructor.
     next_handle = next_handle + 1.
-    handle = CONV #( next_handle ).
+    handle = |{ next_handle }|.
+    created_at = lcl_time=>now( ).
   ENDMETHOD.
 
   METHOD create.
@@ -38,12 +40,20 @@ CLASS cl_bali_log IMPLEMENTATION.
   METHOD create_with_header.
     DATA log TYPE REF TO cl_bali_log.
     CREATE OBJECT log.
-    log->header ?= header.
+    log->header = header.
     result = log.
   ENDMETHOD.
 
   METHOD if_bali_log~set_header.
-    me->header ?= header.
+    me->header = header.
+  ENDMETHOD.
+
+  METHOD if_bali_log~get_header.
+    CREATE OBJECT header TYPE lcl_bali_header_getter
+      EXPORTING
+        header        = me->header
+        items         = items
+        log_timestamp = created_at.
   ENDMETHOD.
 
   METHOD if_bali_log~get_handle.
@@ -52,12 +62,21 @@ CLASS cl_bali_log IMPLEMENTATION.
 
   METHOD if_bali_log~add_item.
     DATA item_line TYPE if_bali_log=>ty_log_item.
+    DATA message TYPE REF TO if_bali_message_setter.
 
     item_line-log_item_number = lines( items ) + 1.
-    CREATE OBJECT item_line-item TYPE lcl_bali_item_getter
-      EXPORTING
-        item = item
-        item_number = item_line-log_item_number.
+    TRY.
+        message ?= item.
+        CREATE OBJECT item_line-item TYPE lcl_bali_message_getter
+          EXPORTING
+            message     = message
+            item_number = item_line-log_item_number.
+      CATCH cx_sy_move_cast_error.
+        CREATE OBJECT item_line-item TYPE lcl_bali_item_getter
+          EXPORTING
+            item        = item
+            item_number = item_line-log_item_number.
+    ENDTRY.
     APPEND item_line TO items.
   ENDMETHOD.
 

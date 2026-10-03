@@ -1,0 +1,5 @@
+CLASS cx_bali_not_found DEFINITION PUBLIC INHERITING FROM cx_bali_runtime FINAL.
+ENDCLASS.
+
+CLASS cx_bali_not_found IMPLEMENTATION.
+ENDCLASS.
