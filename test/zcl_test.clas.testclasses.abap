@@ -205,3 +205,90 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+
+CLASS ltcl_object_check DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    METHODS setup RAISING cx_sql_exception.
+    METHODS teardown RAISING cx_sql_exception.
+    METHODS execute_sql
+      IMPORTING
+        statement TYPE string
+      RAISING
+        cx_sql_exception.
+    METHODS known_object_accepted FOR TESTING RAISING cx_bali_runtime.
+    METHODS known_subobject_accepted FOR TESTING RAISING cx_bali_runtime.
+    METHODS unknown_object_raises FOR TESTING.
+    METHODS unknown_subobject_raises FOR TESTING.
+    METHODS initial_object_accepted FOR TESTING RAISING cx_bali_runtime.
+    METHODS no_objects_defined_accepts_all FOR TESTING RAISING cx_bali_runtime cx_sql_exception.
+
+ENDCLASS.
+
+CLASS ltcl_object_check IMPLEMENTATION.
+
+  METHOD execute_sql.
+* BALOBJ and BALSUB are filled through ADBC, the same way a consumer does it in its database setup
+    DATA lo_statement TYPE REF TO cl_sql_statement.
+
+    CREATE OBJECT lo_statement.
+    lo_statement->execute_update( statement ).
+  ENDMETHOD.
+
+  METHOD setup.
+    execute_sql( `INSERT INTO balobj (object) VALUES ('ZFOOBAR')` ).
+    execute_sql( `INSERT INTO balsub (object, subobject) VALUES ('ZFOOBAR', 'ZSUB')` ).
+  ENDMETHOD.
+
+  METHOD teardown.
+* the other tests run without any object defined
+    execute_sql( `DELETE FROM balobj` ).
+    execute_sql( `DELETE FROM balsub` ).
+  ENDMETHOD.
+
+  METHOD known_object_accepted.
+    cl_abap_unit_assert=>assert_bound( cl_bali_header_setter=>create( object = 'ZFOOBAR' ) ).
+  ENDMETHOD.
+
+  METHOD known_subobject_accepted.
+    cl_abap_unit_assert=>assert_bound( cl_bali_header_setter=>create(
+      object    = 'ZFOOBAR'
+      subobject = 'ZSUB' ) ).
+  ENDMETHOD.
+
+  METHOD unknown_object_raises.
+    TRY.
+        cl_bali_header_setter=>create( object = 'ZUNKNOWN' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_bali_invalid_parameter.
+        RETURN.
+      CATCH cx_bali_runtime.
+        cl_abap_unit_assert=>fail( ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD unknown_subobject_raises.
+    TRY.
+        cl_bali_header_setter=>create(
+          object    = 'ZFOOBAR'
+          subobject = 'ZUNKNOWN' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_bali_invalid_parameter.
+        RETURN.
+      CATCH cx_bali_runtime.
+        cl_abap_unit_assert=>fail( ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD initial_object_accepted.
+    cl_abap_unit_assert=>assert_bound( cl_bali_header_setter=>create( object = '' ) ).
+  ENDMETHOD.
+
+  METHOD no_objects_defined_accepts_all.
+    execute_sql( `DELETE FROM balobj` ).
+
+    cl_abap_unit_assert=>assert_bound( cl_bali_header_setter=>create( object = 'ZUNKNOWN' ) ).
+  ENDMETHOD.
+
+ENDCLASS.
