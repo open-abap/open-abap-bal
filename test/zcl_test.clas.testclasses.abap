@@ -20,6 +20,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS load_picks_log_by_handle FOR TESTING RAISING cx_bali_runtime.
     METHODS load_unknown_handle_raises FOR TESTING.
     METHODS load_deleted_log_raises FOR TESTING RAISING cx_bali_runtime.
+    METHODS display_profile_single_log FOR TESTING.
 
 ENDCLASS.
 
@@ -212,6 +213,19 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_subrc( ).
     cl_abap_unit_assert=>assert_not_initial( lt_lognumbers ).
 
+  ENDMETHOD.
+
+  METHOD display_profile_single_log.
+    DATA ls_profile TYPE bal_s_prof.
+
+    CALL FUNCTION 'BAL_DSP_PROFILE_SINGLE_LOG_GET'
+      IMPORTING
+        e_s_display_profile = ls_profile.
+
+    cl_abap_unit_assert=>assert_not_initial( ls_profile-title ).
+    cl_abap_unit_assert=>assert_equals( act = ls_profile-show_all exp = abap_true ).
+    cl_abap_unit_assert=>assert_equals( act = lines( ls_profile-lev1_fcat ) exp = 1 ).
+    cl_abap_unit_assert=>assert_not_initial( ls_profile-mess_fcat ).
   ENDMETHOD.
 
   METHOD get_header_values.
