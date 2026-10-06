@@ -21,6 +21,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS load_unknown_handle_raises FOR TESTING.
     METHODS load_deleted_log_raises FOR TESTING RAISING cx_bali_runtime.
     METHODS display_profile_single_log FOR TESTING.
+    METHODS log_filter_ranges FOR TESTING.
 
 ENDCLASS.
 
@@ -226,6 +227,19 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( act = ls_profile-show_all exp = abap_true ).
     cl_abap_unit_assert=>assert_equals( act = lines( ls_profile-lev1_fcat ) exp = 1 ).
     cl_abap_unit_assert=>assert_not_initial( ls_profile-mess_fcat ).
+  ENDMETHOD.
+
+  METHOD log_filter_ranges.
+    DATA ls_filter TYPE bal_s_lfil.
+
+    INSERT VALUE #( sign = 'I' option = 'EQ' low = 'ZFOOBAR' ) INTO TABLE ls_filter-object.
+    INSERT VALUE #( sign = 'I' option = 'BT' low = '20260101' high = '20261231' ) INTO TABLE ls_filter-aldate.
+
+    cl_abap_unit_assert=>assert_equals( act = lines( ls_filter-object ) exp = 1 ).
+    cl_abap_unit_assert=>assert_true( xsdbool( 'ZFOOBAR' IN ls_filter-object ) ).
+    cl_abap_unit_assert=>assert_false( xsdbool( 'ZOTHER' IN ls_filter-object ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( CONV d( '20260615' ) IN ls_filter-aldate ) ).
+    cl_abap_unit_assert=>assert_initial( ls_filter-subobject ).
   ENDMETHOD.
 
   METHOD get_header_values.
