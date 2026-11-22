@@ -1,4 +1,5 @@
 INTERFACE if_bali_log PUBLIC.
+  TYPES ty_invalidated TYPE abap_bool.
   TYPES ty_handle TYPE balloghndl.
   TYPES ty_log_item_number TYPE i.
 
@@ -48,4 +49,10 @@ INTERFACE if_bali_log PUBLIC.
       VALUE(result)   TYPE REF TO cl_bali_free_text_setter
     RAISING
       cx_bali_runtime.
+
+  METHODS release_memory.
+
+  METHODS is_invalidated
+    RETURNING
+      VALUE(is_invalidated) TYPE ty_invalidated.
 ENDINTERFACE.
