@@ -20,6 +20,14 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS load_picks_log_by_handle FOR TESTING RAISING cx_bali_runtime.
     METHODS load_unknown_handle_raises FOR TESTING.
     METHODS load_deleted_log_raises FOR TESTING RAISING cx_bali_runtime.
+    METHODS release_memory_invalidates FOR TESTING RAISING cx_bali_runtime.
+    METHODS released_log_rejects_items FOR TESTING RAISING cx_bali_runtime.
+    METHODS released_log_rejects_header FOR TESTING RAISING cx_bali_runtime.
+    METHODS released_log_cannot_be_saved FOR TESTING RAISING cx_bali_runtime.
+    METHODS released_log_cannot_be_deleted FOR TESTING RAISING cx_bali_runtime.
+    METHODS saved_log_survives_release FOR TESTING RAISING cx_bali_runtime.
+    METHODS items_after_save_are_not_saved FOR TESTING RAISING cx_bali_runtime.
+    METHODS loaded_log_is_own_object FOR TESTING RAISING cx_bali_runtime.
     METHODS display_profile_single_log FOR TESTING.
     METHODS log_filter_ranges FOR TESTING.
 
@@ -413,6 +421,115 @@ CLASS ltcl_test IMPLEMENTATION.
       CATCH cx_bali_runtime.
         RETURN.
     ENDTRY.
+  ENDMETHOD.
+
+  METHOD release_memory_invalidates.
+    DATA(log) = cl_bali_log=>create( ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'E' text = 'released' ) ).
+
+    cl_abap_unit_assert=>assert_equals( act = log->is_invalidated( ) exp = abap_false ).
+
+    log->release_memory( ).
+
+    cl_abap_unit_assert=>assert_equals( act = log->is_invalidated( ) exp = abap_true ).
+    cl_abap_unit_assert=>assert_initial( log->get_all_items( ) ).
+    cl_abap_unit_assert=>assert_not_initial( log->get_handle( ) ).
+  ENDMETHOD.
+
+  METHOD released_log_rejects_items.
+    DATA(log) = cl_bali_log=>create( ).
+    log->release_memory( ).
+
+    TRY.
+        log->add_item( cl_bali_free_text_setter=>create( severity = 'E' text = 'too late' ) ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_bali_not_possible INTO DATA(error).
+        cl_abap_unit_assert=>assert_equals(
+          act = error->error_code
+          exp = cx_bali_not_possible=>log_was_invalidated ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD released_log_rejects_header.
+    DATA(log) = cl_bali_log=>create( ).
+    log->release_memory( ).
+
+    TRY.
+        log->set_header( cl_bali_header_setter=>create( object = 'ZFOOBAR' ) ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_bali_not_possible.
+        TRY.
+            log->get_header( ).
+            cl_abap_unit_assert=>fail( ).
+          CATCH cx_bali_not_possible.
+            RETURN.
+        ENDTRY.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD released_log_cannot_be_saved.
+    DATA(log) = cl_bali_log=>create( ).
+    log->release_memory( ).
+
+    TRY.
+        cl_bali_log_db=>get_instance( )->save_log( log ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_bali_not_possible.
+        RETURN.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD released_log_cannot_be_deleted.
+    DATA(log) = cl_bali_log=>create( ).
+    cl_bali_log_db=>get_instance( )->save_log( log ).
+    log->release_memory( ).
+
+    TRY.
+        cl_bali_log_db=>get_instance( )->delete_log( log ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_bali_not_possible.
+        RETURN.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD saved_log_survives_release.
+    DATA(log) = cl_bali_log=>create_with_header( cl_bali_header_setter=>create( object = 'ZFOOBAR' ) ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'E' text = 'persisted' ) ).
+    cl_bali_log_db=>get_instance( )->save_log( log ).
+    DATA(handle) = log->get_handle( ).
+
+    log->release_memory( ).
+
+    DATA(loaded) = cl_bali_log_db=>get_instance( )->load_log( handle ).
+
+    cl_abap_unit_assert=>assert_equals( act = loaded->is_invalidated( ) exp = abap_false ).
+    cl_abap_unit_assert=>assert_equals( act = loaded->get_handle( ) exp = handle ).
+    cl_abap_unit_assert=>assert_equals( act = loaded->get_header( )->object exp = 'ZFOOBAR' ).
+    cl_abap_unit_assert=>assert_equals( act = lines( loaded->get_all_items( ) ) exp = 1 ).
+  ENDMETHOD.
+
+  METHOD items_after_save_are_not_saved.
+    DATA(log) = cl_bali_log=>create( ).
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'E' text = 'saved' ) ).
+    cl_bali_log_db=>get_instance( )->save_log( log ).
+
+    log->add_item( cl_bali_free_text_setter=>create( severity = 'E' text = 'not saved' ) ).
+
+    DATA(loaded) = cl_bali_log_db=>get_instance( )->load_log( log->get_handle( ) ).
+
+    cl_abap_unit_assert=>assert_equals( act = lines( loaded->get_all_items( ) ) exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = lines( log->get_all_items( ) ) exp = 2 ).
+  ENDMETHOD.
+
+  METHOD loaded_log_is_own_object.
+    DATA(log) = cl_bali_log=>create( ).
+    cl_bali_log_db=>get_instance( )->save_log( log ).
+
+    DATA(loaded) = cl_bali_log_db=>get_instance( )->load_log( log->get_handle( ) ).
+    loaded->add_item( cl_bali_free_text_setter=>create( severity = 'E' text = 'only in the loaded log' ) ).
+
+    cl_abap_unit_assert=>assert_initial( log->get_all_items( ) ).
+    cl_abap_unit_assert=>assert_equals( act = loaded->get_handle( ) exp = log->get_handle( ) ).
   ENDMETHOD.
 
 ENDCLASS.
